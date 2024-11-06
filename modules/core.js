@@ -28,6 +28,20 @@ router.get('/reg', (req, res) => {
     });
 });
 
+// Kölcsönző oldal betöltése
+router.get('/reg', (req, res) => {
+    ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session }, (err, html) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        req.session.msg = '';
+        res.send(html);
+    });
+});
+
+
+
 /*
 // Új adat bevitele
 router.get('/newdata', (req, res) => {
@@ -46,7 +60,7 @@ router.get('/newdata', (req, res) => {
 });*/
 
 
-/*
+
 // Kijelentkezés
 router.get('/logout', (req, res) => {
     req.session.isLoggedIn = false;
@@ -57,6 +71,6 @@ router.get('/logout', (req, res) => {
     req.session.msg = 'You are logged out!';
     req.session.severity = 'info';
     res.redirect('/');
-});*/
+});
 
 module.exports = router;
