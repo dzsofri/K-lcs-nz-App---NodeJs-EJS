@@ -1,6 +1,5 @@
 const express = require('express');
 const ejs = require('ejs');
-const axios = require('axios'); // Axios a statisztikák lekéréséhez
 const router = express.Router();
 
 // CORE routes
@@ -58,7 +57,6 @@ router.get('/logout', (req, res) => {
     req.session.msg = 'You are logged out!';
     req.session.severity = 'info';
     res.redirect('/');
-});
+});*/
 
 module.exports = router;
-*/
