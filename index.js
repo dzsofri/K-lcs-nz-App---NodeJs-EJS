@@ -18,8 +18,9 @@ app.use(session({ secret: process.env.SESSION_SECRET}));
 
 
 app.use('/', coreRoutes);
-/*
-app.use('/users', userRoutes); 
+
+app.use('/users', userRoutes);
+ /*
 app.use('/steps', stepRoutes);
 
 */

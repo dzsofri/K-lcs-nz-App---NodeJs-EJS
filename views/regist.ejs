@@ -1,0 +1,27 @@
+<%- include('header') %>
+
+<h4 class="mb-3">Registration</h4>
+
+<%- include('message') %>
+
+<form action="/users/reg" method="post">
+    <div class="form-floating mb-3">
+        <input type="text" class="form-control" name="name" placeholder="">
+        <label for="name">Username</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" name="email" placeholder="">
+        <label for="email">Email address</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" name="passwd" placeholder="">
+        <label for="passwd">Password</label>
+    </div>
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" name="confirm" placeholder="">
+        <label for="confirm">Confirm password</label>
+    </div>
+    <input class="btn btn-primary mb-3" type="submit" value="Registration" name="regBtn">
+</form>
+
+<%- include('footer') %>
