@@ -5,6 +5,7 @@ var session = require('express-session');
 const coreRoutes = require('./modules/core');
 const userRoutes = require('./modules/users');
 const databaseRoutes = require('./modules/database');
+const kolcsonzesRoutes = require('./modules/kolcsonzes');
 
 const app = express();
 const port = process.env.PORT;
@@ -20,6 +21,7 @@ app.use(session({ secret: process.env.SESSION_SECRET}));
 app.use('/', coreRoutes);
 
 app.use('/users', userRoutes);
+app.use('/kolcsonzes', kolcsonzesRoutes);
  /*
 app.use('/steps', stepRoutes);
 

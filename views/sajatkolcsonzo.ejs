@@ -11,6 +11,9 @@
                 <th scope="col">Kölcsönzés Dátuma</th>
                 <th scope="col">Tárgy Címe</th>
                 <th scope="col">Visszahozás Dátuma</th>
+                <% if (results.some(item => !item.return_date)) { %>
+                    <th scope="col">Akció</th> <!-- Only show the "Akció" column if there are items that haven't been returned -->
+                <% } %>
             </tr>
         </thead>
         <tbody>
@@ -25,6 +28,13 @@
                             <span class="text-danger">Nincs visszahozva</span>
                         <% } %>
                     </td>
+                    <% if (!item.return_date) { %> <!-- Only show the action column for items that haven't been returned -->
+                        <td>
+                            <form action="/kolcsonzes/return/<%= item.rental_id %>" method="POST">
+                                <button type="submit" class="btn btn-warning">Visszahozás</button>
+                            </form>
+                        </td>
+                    <% } %>
                 </tr>
             <% }); %>
         </tbody>
