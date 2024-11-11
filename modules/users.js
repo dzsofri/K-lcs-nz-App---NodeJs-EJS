@@ -69,7 +69,7 @@ router.post('/login', (req, res)=>{
         res.redirect('/');
         return
     }
-console.log(CryptoJS.SHA1(passwd).toString())
+
     db.query(`SELECT * FROM users WHERE email=? AND passwd=?`, [email, CryptoJS.SHA1(passwd).toString()], (err, results)=>{
         if (err){
             req.session.msg = 'Database error!';
@@ -87,12 +87,15 @@ console.log(CryptoJS.SHA1(passwd).toString())
         req.session.severity = 'info';
 
         req.session.isLoggedIn = true;
-        req.session.userID = results[0].ID;
+        req.session.userID = results[0].user_id;
         req.session.userName = results[0].name;
         req.session.userEmail = results[0].email;
         req.session.membership_date = results[0].membership_date;
         req.session.userRole = results[0].role;
 
+        if (results[0].role=="admin") {
+            req.session.isAdmin = true;
+        }
       //  console.log(req.session);
         res.redirect('/kolcsonzo');
         return
