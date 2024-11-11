@@ -46,7 +46,7 @@ router.get('/newdata', (req, res) => {
 });*/
 
 
-/*
+
 // Kijelentkezés
 router.get('/logout', (req, res) => {
     req.session.isLoggedIn = false;
@@ -57,6 +57,6 @@ router.get('/logout', (req, res) => {
     req.session.msg = 'You are logged out!';
     req.session.severity = 'info';
     res.redirect('/');
-});*/
+});
 
 module.exports = router;
