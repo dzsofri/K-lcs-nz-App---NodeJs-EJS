@@ -10,15 +10,18 @@
         <th scope="col">#</th>
         <th scope="col">Film/könyv címe</th>
         <th scope="col">Elérhető</th>
-        <th scope="col">Művelet</th>
+        <th class="text-end" scope="col">Művelet</th>
       </tr>
     </thead>
     <tbody>
-        <% results.forEach(item => { %>
+        <% results.forEach((item, index) => { %>
             <tr>
-                <td><%= item.title %></td>
-                <td><%= item.available %></td> 
-                
+                <td><%= (index+1)%>.</td>
+                <td><%= item.title %></td> 
+                <td><%= item.available %></td>
+                <td class="text-end">
+                    <a class="btn btn-warning btn-sm">Kölcsönzés</a>
+                </td>
             </tr>
         <% }); %>
 

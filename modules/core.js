@@ -31,29 +31,19 @@ router.get('/reg', (req, res) => {
 });
 
 // Kölcsönző oldal betöltése
+// Kölcsönző oldal betöltése
 router.get('/kolcsonzo', (req, res) => {
     if (req.session.isLoggedIn) {
         db.query(`
-            SELECT * FROM items
-           
-        `,(err, results) => {
+            SELECT * FROM items WHERE available = 1`,(err, results) => {
             if (err) {
- 
                 console.log(err);
                 return;
             }
- 
-            
-            
- 
             // Az összes kölcsönzés dátumát formázni
             results.forEach(item => {
                 item.title = item.title
-                if(item.available == 1){
                     item.available = 'elérhető'
-                }else{
-                    item.available = 'nem elérhető'
-                }
             });
  
             // EJS sablon renderelése
@@ -62,16 +52,13 @@ router.get('/kolcsonzo', (req, res) => {
                     console.log(err);
                     return;
                 }
- 
                 // Üzenet törlése
                 req.session.msg = '';
                 res.send(html);
             });
         });
- 
         return;
     }
- 
     // Ha a felhasználó nincs bejelentkezve, átirányítjuk a főoldalra
     res.redirect('/');
 });
