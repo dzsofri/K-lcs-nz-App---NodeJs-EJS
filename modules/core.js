@@ -28,6 +28,20 @@ router.get('/reg', (req, res) => {
     });
 });
 
+// Kölcsönző oldal betöltése
+router.get('/reg', (req, res) => {
+    ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session }, (err, html) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        req.session.msg = '';
+        res.send(html);
+    });
+});
+
+
+
 /*
 // Új adat bevitele
 router.get('/newdata', (req, res) => {
