@@ -1,5 +1,6 @@
 const express = require('express');
 const ejs = require('ejs');
+const db = require('./database');
 const router = express.Router();
 
 // CORE routes
@@ -10,7 +11,7 @@ router.get('/', (req, res) => {
         if (err) {
             console.log(err);
             return;
-        }
+        }   
         req.session.msg = '';
         res.send(html);
     });
@@ -29,24 +30,60 @@ router.get('/reg', (req, res) => {
 });
 
 // Kölcsönző oldal betöltése
-router.get('/reg', (req, res) => {
-    ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session }, (err, html) => {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        req.session.msg = '';
-        res.send(html);
-    });
+router.get('/kolcsonzo', (req, res) => {
+    if (req.session.isLoggedIn) {
+        db.query(`
+            SELECT * FROM items
+            ORDER BY rentals.rental_date ASC
+        `,(err, results) => {
+            if (err) {
+ 
+                console.log(err);
+                return;
+            }
+ 
+            
+            
+ 
+            // Az összes kölcsönzés dátumát formázni
+            results.forEach(item => {
+                item.title = item.title
+                if(item.available == 1){
+                    item.available = 'elérhető'
+                }else{
+                    item.available = 'nem elérhető'
+                }
+            });
+ 
+            // EJS sablon renderelése
+            ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session, results }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+ 
+                // Üzenet törlése
+                req.session.msg = '';
+                res.send(html);
+            });
+        });
+ 
+        return;
+    }
+ 
+    // Ha a felhasználó nincs bejelentkezve, átirányítjuk a főoldalra
+    res.redirect('/');
 });
 
 
 
+
 /*
+
 // Új adat bevitele
 router.get('/newdata', (req, res) => {
     if (req.session.isLoggedIn) {
-        ejs.renderFile('./views/newdata.ejs', { session: req.session }, (err, html) => {
+        ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session }, (err, html) => {
             if (err) {
                 console.log(err);
                 return;
@@ -57,7 +94,8 @@ router.get('/newdata', (req, res) => {
         return;
     }
     res.redirect('/');
-});*/
+});
+*/
 
 
 

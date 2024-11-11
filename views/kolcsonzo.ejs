@@ -8,29 +8,23 @@
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">Film/könyv</th>
+        <th scope="col">Film/könyv címe</th>
         <th scope="col">Elérhető</th>
+        <th scope="col">Művelet</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-      </tr>
+        <% results.forEach(item => { %>
+            <tr>
+                <td><%= item.title %></td>
+                <td><%= item.available %></td> 
+                
+            </tr>
+        <% }); %>
+
     </tbody>
   </table>
 
 <%- include('footer') %>
+
+

@@ -44,6 +44,7 @@ router.post('/reg', (req, res) => {
         VALUES (?, ?, ?, SHA1(?), NOW(), 'user')`, 
         [uuid.v4(), name, email, passwd], (err, results) => {
             if (err) {
+                console.log(err);
                 req.session.msg = 'Database error!';
                 req.session.severity = 'danger';
                 res.redirect('/reg');
