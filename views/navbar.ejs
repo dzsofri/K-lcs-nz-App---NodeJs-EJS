@@ -25,7 +25,7 @@
               <a class="nav-link" aria-current="page" href="/kolcsonzo">Kölcsönzés</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="">Saját kölcsönzések</a>
+              <a class="nav-link" aria-current="page" href="/own">Saját kölcsönzések</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="/logout">Logout</a>
@@ -34,9 +34,11 @@
           <% } %>
 
         <!-- //TODO: ha admin-ként vagyunk bejelentkezve -->
+        <% if (session.isAdmin) { %>
         <li class="nav-item">
             <a class="nav-link" aria-current="page" href="/">Admin funkciók</a>
           </li>
+          <% } %>
 
     </div>
     </div>
