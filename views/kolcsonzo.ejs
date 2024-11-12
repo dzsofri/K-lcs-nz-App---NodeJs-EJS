@@ -20,7 +20,9 @@
                 <td><%= item.title %></td> 
                 <td><%= item.available %></td>
                 <td class="text-end">
-                    <a class="btn btn-warning btn-sm">Kölcsönzés</a>
+                  <form action="/kolcsonzes/kolcsonzes/<%= item.item_id %>" method="POST">
+                    <button type="submit" class="btn btn-warning">Kölcsönzés</button>
+                </form>
                 </td>
             </tr>
         <% }); %>

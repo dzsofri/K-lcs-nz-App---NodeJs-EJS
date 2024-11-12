@@ -30,7 +30,7 @@ router.get('/reg', (req, res) => {
     });
 });
 
-// Kölcsönző oldal betöltése
+
 // Kölcsönző oldal betöltése
 router.get('/kolcsonzo', (req, res) => {
     if (req.session.isLoggedIn) {
@@ -44,6 +44,7 @@ router.get('/kolcsonzo', (req, res) => {
             results.forEach(item => {
                 item.title = item.title
                     item.available = 'elérhető'
+                    item.item_id = item.item_id
             });
  
             // EJS sablon renderelése
