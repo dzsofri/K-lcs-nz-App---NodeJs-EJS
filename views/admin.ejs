@@ -1,0 +1,35 @@
+<%- include('header') %>
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Statisztikák Megtekintése</h1>
+
+    <%- include('message') %>
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Név</th>
+                <th scope="col">Email</th>
+                <th scope="col">Email</th>
+                <th scope="col"> Regisztráció dátuma</th>
+                <th scope="col">Szerepkör</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% results.forEach(item => { %>
+                <tr>
+                    <td><%= item.user_id %></td>
+                    <td><%= item.name %></td> <!-- Tárgy neve -->
+                    <td><%= item.email%></td>
+                    <td><%= item.membership_date%></td>
+                    <td><%= item.role%></td>
+                    
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+
+<%- include('footer') %>

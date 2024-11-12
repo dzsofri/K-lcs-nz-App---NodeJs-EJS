@@ -8,6 +8,8 @@ const moment = require('moment');
 
 // Kezdőlap betöltése
 router.get('/', (req, res) => {
+
+    
     ejs.renderFile('./views/index.ejs', { session: req.session }, (err, html) => {
         if (err) {
             console.log(err);
@@ -17,6 +19,41 @@ router.get('/', (req, res) => {
         res.send(html);
     });
 });
+
+
+
+router.get('/admin', (req, res) => {
+    // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
+    if (req.session.isLoggedIn)  {
+        // Felhasználói adatok lekérdezése
+        db.query('SELECT user_id, username, email, role, registration_date FROM users', 
+         (err, results) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Hiba történt a felhasználói adatok lekérdezésekor');
+                }
+
+                if (!results || results.length === 0) {
+                    // Ha nincs felhasználó az adatbázisban
+                    return res.status(404).send('Nincsenek felhasználók');
+                }
+
+                // EJS sablon renderelése, felhasználói adatok átadása
+                ejs.renderFile('./views/admin.ejs', { session: req.session, users: results }, (err, html) => {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send('Hiba történt az admin oldal megjelenítésekor');
+                    }   
+                    req.session.msg = '';
+                    res.send(html);
+                });
+        });
+    } else {
+        // Ha a felhasználó nincs bejelentkezve, visszairányítás bejelentkező oldalra
+        res.redirect('/login');
+    }
+});
+
 
 // Regisztrációs oldal betöltése
 router.get('/reg', (req, res) => {
