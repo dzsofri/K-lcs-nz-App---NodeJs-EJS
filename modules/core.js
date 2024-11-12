@@ -76,7 +76,7 @@ router.get('/own', (req, res) => {
             JOIN users ON rentals.user_id = users.user_id
             JOIN items ON rentals.item_id = items.item_id
             WHERE rentals.user_id = ?
-            ORDER BY rentals.rental_date ASC
+            
         `, [req.session.userID], (err, results) => {
             if (err) {
 
