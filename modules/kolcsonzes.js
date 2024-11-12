@@ -45,22 +45,34 @@ router.post('/return/:id', async (req, res) => {
 
 
 router.post('/kolcsonzes/:id', async (req, res) => {
-    const rentalId = req.params.id; // Capture the rental_id from the URL
+    const item_id = req.params.id; // Capture the item_id from the URL
     const currentDate = new Date(); // Get the current date
 
     try {
-        // Assuming db is properly configured to query your database
+        // Insert a new record into the rentals table
         db.query(`
         INSERT INTO rentals (rental_id, user_id, item_id, rental_date) VALUES (?, ?, ?, ?)`, 
-            [uuid.v4(), req.session.userID, rentalId, currentDate], (err, results) => {
+            [uuid.v4(), req.session.userID, item_id, currentDate], (err, results) => {
                 if (err) {
                     console.log(err);
-                    return res.status(500).send('Error updating the rental item');
+                    return res.status(500).send('Error adding rental record');
                 }
 
-                // After the update, you can return a response or render a template
-                res.send('Item rented successfully!');
+                // Update the availability of the item in the items table
+                db.query(`
+                    UPDATE items 
+                    SET available = 0  
+                    WHERE item_id = ?`, [item_id], (err, results) => {
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).send('Error updating item availability');
+                        }
+
+                        // After the updates, send a success response
+                        res.send('Item rented and marked as unavailable!');
+                    });
             });
+
     } catch (error) {
         console.log(error);
         return res.status(500).send('Server error');
