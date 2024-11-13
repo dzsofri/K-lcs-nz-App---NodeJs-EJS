@@ -19,42 +19,113 @@ router.get('/', (req, res) => {
         res.send(html);
     });
 });
+// Módosítás oldal betöltése (GET kérés)
+router.get('/edit/:id', (req, res) => {
+    const itemId = req.params.id;  // Az 'id' paraméter lekérése
 
+    // Az 'id' alapján lekérjük a terméket az adatbázisból
+    db.query('SELECT * FROM items WHERE item_id = ?', [itemId], (err, result) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Hiba történt a termék lekérésekor');
+        }
 
+        // Ellenőrizd, hogy találtunk-e ilyen terméket
+        if (result.length === 0) {
+            return res.status(404).send('A termék nem található');
+        }
 
-router.get('/admin', (req, res) => {
-    if (req.session.isLoggedIn) {
-        db.query(`
-            SELECT * FROM users`,(err, results) => {
+        // Ha a termék megtalálható, rendeljük hozzá a termék adatait a sablonhoz
+        ejs.renderFile('./views/edit-item.ejs', {
+            session: req.session,
+            item: result[0]  // A termék adatainak átadása az EJS sablonnak
+        }, (err, html) => {
             if (err) {
                 console.log(err);
                 return;
             }
-            results.forEach(item => {
-                item.user_id = item.user_id
-                    item.name = item.name
-                    item.email = item.email
-                    item.membership_date = moment(item.membership_date).format("yyyy-MM-DD")
-                    item.role = item.role
-            });
- 
-            // EJS sablon renderelése
-            ejs.renderFile('./views/admin.ejs', { session: req.session, results }, (err, html) => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                // Üzenet törlése
-                req.session.msg = '';
-                res.send(html);
-            });
+            req.session.msg = '';
+            res.send(html);  // Az EJS sablon elküldése válaszként
         });
-        return;
-    }
-    // Ha a felhasználó nincs bejelentkezve, átirányítjuk a főoldalra
-    res.redirect('/');
+    });
 });
 
+
+router.get('/admin', (req, res) => {
+    if (req.session.isLoggedIn) {
+        const userQuery = `SELECT * FROM users`;
+        const rentalQuery = `
+            SELECT rentals.*, users.name AS user_name, items.title AS item_title
+            FROM rentals
+            JOIN users ON rentals.user_id = users.user_id
+            JOIN items ON rentals.item_id = items.item_id
+        `;
+        const itemsQuery = `SELECT * FROM items`;
+
+        // Az adatbázisból történő adatlekérdezés párhuzamosan történik
+        Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(userQuery, (err, users) => {
+                    if (err) return reject(err);
+                    // A tagsági dátum formázása
+                    users.forEach(user => {
+                        user.membership_date = moment(user.membership_date).format("YYYY-MM-DD");
+                    });
+                    resolve(users);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(rentalQuery, (err, rentals) => {
+                    if (err) return reject(err);
+                   
+                    rentals.forEach(rental => {
+                        rental.rental_date = moment(rental.rental_date).format("YYYY-MM-DD");
+                        
+                       
+                        if (!rental.return_date) {
+                            rental.return_date = "Nem elérhető"; 
+                        } else {
+                            rental.return_date = moment(rental.return_date).format("YYYY-MM-DD");
+                        }
+                    });
+                    resolve(rentals);
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(itemsQuery, (err, items) => {
+                    if (err) return reject(err);
+                    // Az elérhetőség formázása
+                    items.forEach(item => {
+                        item.available = item.available === 1 ? "Elérhető" : "Nem elérhető";
+                    });
+                    resolve(items);
+                });
+            })
+        ])
+        .then(([users, rentals, items]) => {
+            // Az adatok átadása az EJS sablonhoz
+            ejs.renderFile('./views/admin.ejs', { 
+                session: req.session, 
+                users, 
+                rentals,
+                items 
+            }, (err, html) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Hiba történt az admin oldal megjelenítésekor');
+                }
+                req.session.msg = ''; // Üzenet törlése
+                res.send(html); // Az EJS sablon renderelése és visszaküldése
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('Hiba történt az adatok lekérdezésekor');
+        });
+    } else {
+        res.redirect('/'); // Ha nincs bejelentkezve, irányítás a főoldalra
+    }
+});
 
 
 // Regisztrációs oldal betöltése
