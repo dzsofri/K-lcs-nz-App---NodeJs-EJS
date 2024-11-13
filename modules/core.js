@@ -50,6 +50,64 @@ router.get('/edit/:id', (req, res) => {
     });
 });
 
+router.get('/statistics', (req, res) => {
+    if (req.session.isLoggedIn) {
+        // SQL lekérdezések a legnépszerűbb felhasználók és tárgyak lekéréséhez
+        const userStatsQuery = `
+            SELECT users.name, COUNT(rentals.rental_id) AS rental_count
+            FROM users
+            LEFT JOIN rentals ON users.user_id = rentals.user_id
+            GROUP BY users.user_id
+            ORDER BY rental_count DESC
+            LIMIT 10;
+        `;
+
+        const itemStatsQuery = `
+            SELECT items.title, COUNT(rentals.rental_id) AS rental_count
+            FROM items
+            LEFT JOIN rentals ON items.item_id = rentals.item_id
+            GROUP BY items.item_id
+            ORDER BY rental_count DESC
+            LIMIT 10;
+        `;
+
+        // Párhuzamos adatbázis lekérdezések
+        Promise.all([
+            new Promise((resolve, reject) => {
+                db.query(userStatsQuery, (err, users) => {
+                    if (err) return reject(err);
+                    resolve(users); // Felhasználói statisztikák
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.query(itemStatsQuery, (err, items) => {
+                    if (err) return reject(err);
+                    resolve(items); // Tárgy statisztikák
+                });
+            })
+        ])
+        .then(([userStats, itemStats]) => {
+            // EJS sablon renderelése a statisztikák megjelenítéséhez
+            ejs.renderFile('./views/userstatics.ejs', {
+                session: req.session,
+                userStats,  // A legaktívabb felhasználók
+                itemStats   // A legnépszerűbb tárgyak
+            }, (err, html) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Hiba történt a statisztikák megjelenítésekor');
+                }
+                res.send(html); // EJS sablon renderelése
+            });
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).send('Hiba történt az adatok lekérdezésekor');
+        });
+    } else {
+        res.redirect('/'); // Ha nincs bejelentkezve, irányítás a főoldalra
+    }
+});
 
 router.get('/admin', (req, res) => {
     if (req.session.isLoggedIn) {
