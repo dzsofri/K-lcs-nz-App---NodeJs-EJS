@@ -23,36 +23,38 @@ router.get('/', (req, res) => {
 
 
 router.get('/admin', (req, res) => {
-    // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
-    if (req.session.isLoggedIn)  {
-        // Felhasználói adatok lekérdezése
-        db.query('SELECT user_id, username, email, role, registration_date FROM users', 
-         (err, results) => {
+    if (req.session.isLoggedIn) {
+        db.query(`
+            SELECT * FROM users`,(err, results) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            results.forEach(item => {
+                item.user_id = item.user_id
+                    item.name = item.name
+                    item.email = item.email
+                    item.membership_date = moment(item.membership_date).format("yyyy-MM-DD")
+                    item.role = item.role
+            });
+ 
+            // EJS sablon renderelése
+            ejs.renderFile('./views/admin.ejs', { session: req.session, results }, (err, html) => {
                 if (err) {
-                    console.error(err);
-                    return res.status(500).send('Hiba történt a felhasználói adatok lekérdezésekor');
+                    console.log(err);
+                    return;
                 }
-
-                if (!results || results.length === 0) {
-                    // Ha nincs felhasználó az adatbázisban
-                    return res.status(404).send('Nincsenek felhasználók');
-                }
-
-                // EJS sablon renderelése, felhasználói adatok átadása
-                ejs.renderFile('./views/admin.ejs', { session: req.session, users: results }, (err, html) => {
-                    if (err) {
-                        console.error(err);
-                        return res.status(500).send('Hiba történt az admin oldal megjelenítésekor');
-                    }   
-                    req.session.msg = '';
-                    res.send(html);
-                });
+                // Üzenet törlése
+                req.session.msg = '';
+                res.send(html);
+            });
         });
-    } else {
-        // Ha a felhasználó nincs bejelentkezve, visszairányítás bejelentkező oldalra
-        res.redirect('/login');
+        return;
     }
+    // Ha a felhasználó nincs bejelentkezve, átirányítjuk a főoldalra
+    res.redirect('/');
 });
+
 
 
 // Regisztrációs oldal betöltése
