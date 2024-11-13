@@ -6,6 +6,8 @@ const moment = require('moment');
 
 // CORE routes
 
+
+
 // Kezdőlap betöltése
 router.get('/', (req, res) => {
 
@@ -19,7 +21,6 @@ router.get('/', (req, res) => {
         res.send(html);
     });
 });
-
 
 
 router.get('/admin', (req, res) => {
@@ -158,6 +159,7 @@ console.log('User ID:', req.session.userID);
 
 
 
+
 /*
 
 // Új adat bevitele
@@ -176,7 +178,6 @@ router.get('/newdata', (req, res) => {
     res.redirect('/');
 });
 */
-
 
 
 // Kijelentkezés

@@ -84,12 +84,16 @@ router.post('/kolcsonzes/:id', async (req, res) => {
                     SET available = 0  
                     WHERE item_id = ?`, [item_id], (err, results) => {
                         if (err) {
-                            console.log(err);
-                            return res.status(500).send('Error updating item availability');
+                            req.session.msg = 'Error updating item availability';
+                            req.session.severity = 'danger';
+                            res.redirect('/kolcsonzo');
+                            return;
                         }
 
-                        // After the updates, send a success response
-                        res.send('Item rented and marked as unavailable!');
+                        req.session.msg = 'Item rented and marked as unavailable!';
+                        req.session.severity = 'success';
+                        res.redirect('/kolcsonzo');
+                        return;
                     });
             });
 
@@ -97,6 +101,32 @@ router.post('/kolcsonzes/:id', async (req, res) => {
         console.log(error);
         return res.status(500).send('Server error');
     }
+});
+
+
+router.get('/kolcsonzo', (req, res) => {
+    const { type } = req.query;  // Lekérjük a query paramétert (pl. ?type=film)
+
+    let sql = 'SELECT * FROM items';  // Alap SQL lekérdezés
+    const queryParams = [];
+
+    // Ha van típus paraméter, akkor szűrünk
+    if (type) {
+        sql += ' WHERE type LIKE ?';  // A 'type' mező alapján szűrünk
+        queryParams.push(`%${type}%`);  // A LIKE operátorral részleges egyezést keresünk
+    }
+
+    // Adatbázis lekérdezése
+    db.query(sql, queryParams, (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Hiba történt az adatbázis lekérdezése közben');
+        }
+
+        // Rendereljük az oldalt a szűrt eredményekkel
+        // Átadjuk a 'type' változót, hogy elérhető legyen az EJS-ben
+        res.render('kolcsonzo', { results, type: type || '' });  // Ha nincs 'type', akkor üres stringet adunk
+    });
 });
 
 
