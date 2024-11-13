@@ -1,0 +1,23 @@
+
+<%- include('header') %>
+
+<h3 class="text-center mt-4 mb-4">Termék Módosítása</h3>
+
+<form action="/kolcsonzes/edit/<%= item.item_id %>" method="POST" class="mb-4">
+    <div class="form-group mb-2">
+        <label for="item_name">Termék neve:</label>
+        <input type="text" id="item_name" name="item_name" class="form-control" value="<%= item.title %>" required>
+    </div>
+
+    <div class="form-group mb-4">
+        <label for="type">Típus:</label>
+        <select class="form-select" name="type" required>
+            <option value="könyv" <%= item.type === 'könyv' ? 'selected' : '' %>>Könyv</option>
+            <option value="film" <%= item.type === 'film' ? 'selected' : '' %>>Film</option>
+        </select>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Módosítás</button>
+</form>
+
+<%- include('footer') %>

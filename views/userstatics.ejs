@@ -1,0 +1,35 @@
+<h2>A legtöbb kölcsönzéssel rendelkező felhasználók</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Felhasználó</th>
+                <th>Kölcsönzések száma</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% userStats.forEach(function(user) { %>
+                <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.rental_count %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+
+    <h2>A legtöbbet kölcsönzött tárgyak</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Tárgy</th>
+                <th>Kölcsönzések száma</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% itemStats.forEach(function(item) { %>
+                <tr>
+                    <td><%= item.title %></td>
+                    <td><%= item.rental_count %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>

@@ -62,7 +62,22 @@ router.post('/return/:id', async (req, res) => {
 });
 
 
+router.post('/delete/:id', (req, res) => {
+    const itemId = req.params.id;
+console.log(itemId)
+    // Törlés SQL lekérdezés
+    const deleteQuery = `DELETE FROM items WHERE item_id = ?`;
 
+    db.query(deleteQuery, [itemId], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send('Hiba történt a termék törlésekor');
+        }
+
+        // A törlés sikeres, átirányítás a termékek listájához
+        res.redirect('/admin');
+    });
+});
 
 router.post('/kolcsonzes/:id', async (req, res) => {
     const item_id = req.params.id; // Capture the item_id from the URL
@@ -131,7 +146,47 @@ router.get('/kolcsonzo', (req, res) => {
 
 
 
+// Új termék hozzáadása
+router.post('/add', (req, res) => {
+    const { item_name, type } = req.body;
+    console.log(item_name, type)
+    db.query(
+        `INSERT INTO items (item_id, title, type, available) VALUES (?, ?, ?, ?)`,
+        [uuid.v4(), item_name, type, 1],
+        (err, result) => {
+            if (err) {
+                
+                console.error(err);
+                return res.status(500).send('Hiba történt a termék hozzáadása során');
+            }
+            res.redirect('/admin'); // Visszairányítás a CRUD oldalra sikeres hozzáadás után
+        }
+       
+    );
+   
+});
 
 
+
+
+// Módosítás mentése (POST kérés)
+router.post('/edit/:id', (req, res) => {
+    const item_id = req.params.id; // Az ID lekérése a URL-ből
+    const { item_name, type } = req.body; // Az új adatokat a formból
+
+    db.query(`
+        UPDATE items 
+        SET title = ?, type = ? 
+        WHERE item_id = ?`, 
+        [item_name, type, item_id], 
+        (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Hiba történt a termék módosítása során');
+            }
+            res.redirect('/admin'); // Átirányítás a CRUD oldalra sikeres módosítás után
+        }
+    );
+});
 
 module.exports = router;

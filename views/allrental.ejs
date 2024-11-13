@@ -1,0 +1,51 @@
+<div class="container mt-3">
+    <h2 class="text-center mb-2">Összes Kölcsönzés</h2>
+
+    <p>Összes kölcsönzés száma: <strong><%= rentals.length %></strong> </p>
+
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Kölcsönző</th>
+                <th scope="col">Termék</th>
+                <th scope="col">Kölcsönzés Dátuma</th>
+                <th scope="col">Visszahozás Dátuma</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% rentals.forEach(item => { %>
+                <tr>
+                    <td><%= item.rental_id %></td>
+                    <td><%= item.user_name %></td>
+                    <td><%= item.item_title %></td>
+                    <td><%= item.rental_date %></td>
+                    <td><%= item.return_date%></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <h2>Még nem hozták vissza:</h2>
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Kölcsönző neve</th>
+                <th scope="col">Termék</th>
+                <th scope="col">Kölcsönzés Dátuma</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% rentals.forEach(item => { %>
+               
+                <% if (item.return_date === "Nem elérhető") { %>
+                    <tr>
+                        <td><%= item.user_name %></td>
+                        <td><%= item.item_title %></td>
+                        <td><%= item.rental_date %></td>
+                    </tr>
+                <% } %>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
