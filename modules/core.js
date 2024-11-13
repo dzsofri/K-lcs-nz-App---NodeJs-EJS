@@ -26,7 +26,7 @@ router.get('/edit/:id', (req, res) => {
     const itemId = req.params.id;  // Az 'id' paraméter lekérése
 
     // Az 'id' alapján lekérjük a terméket az adatbázisból
-    db.query('SELECT * FROM items WHERE item_id = ?', [itemId], (err, result) => {
+    db.query('SELECT * FROM items WHERE item_id = ?', [itemId], (err, results) => {
         if (err) {
             console.log(err);
             return res.status(500).send('Hiba történt a termék lekérésekor');
@@ -38,31 +38,41 @@ router.get('/edit/:id', (req, res) => {
 
 router.get('/admin', (req, res) => {
     // Ellenőrzés, hogy a felhasználó be van-e jelentkezve
-    if (req.session.isLoggedIn)  {
+    if (req.session.isLoggedIn) {
         // Felhasználói adatok lekérdezése
-        db.query('SELECT user_id, username, email, role, registration_date FROM users', 
-         (err, results) => {
+        db.query('SELECT user_id, name, email, role, membership_date FROM users', 
+        (err, results) => {
 
-        // Ellenőrizd, hogy találtunk-e ilyen terméket
-        if (result.length === 0) {
-            return res.status(404).send('A termék nem található');
-        }
-
-        // Ha a termék megtalálható, rendeljük hozzá a termék adatait a sablonhoz
-        ejs.renderFile('./views/edit-item.ejs', {
-            session: req.session,
-            item: result[0]  // A termék adatainak átadása az EJS sablonnak
-        }, (err, html) => {
+            // Hibaellenőrzés, ha a lekérdezés nem sikerült
             if (err) {
-                console.log(err);
-                return;
+                console.log("Hiba a lekérdezés során:", err);
+                return res.status(500).send("Hiba a lekérdezés során");
             }
-            req.session.msg = '';
-            res.send(html);  // Az EJS sablon elküldése válaszként
-        });   
-    });
-}
+
+            // Ellenőrizd, hogy a 'results' nem undefined vagy null
+            if (!results || results.length === 0) {
+                return res.status(404).send('Nincs felhasználó az adatbázisban');
+            }
+
+            // Ha a felhasználók megtalálhatóak, adjuk át őket az EJS sablonnak
+            ejs.renderFile('./views/edit-item.ejs', {
+                session: req.session,
+                item: results[0]  // Az első felhasználó adatait adjuk át
+            }, (err, html) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send('Hiba az EJS sablon renderelésekor');
+                }
+                req.session.msg = '';
+                res.send(html);  // Az EJS sablon elküldése válaszként
+            });
+        });
+    } else {
+        // Ha nincs bejelentkezve a felhasználó
+        return res.status(401).send('Nem vagy bejelentkezve');
+    }
 });
+
     
 
 router.get('/statistics', (req, res) => {

@@ -119,30 +119,6 @@ router.post('/kolcsonzes/:id', async (req, res) => {
 });
 
 
-router.get('/kolcsonzo', (req, res) => {
-    const { type } = req.query;  // Lekérjük a query paramétert (pl. ?type=film)
-
-    let sql = 'SELECT * FROM items';  // Alap SQL lekérdezés
-    const queryParams = [];
-
-    // Ha van típus paraméter, akkor szűrünk
-    if (type) {
-        sql += ' WHERE type LIKE ?';  // A 'type' mező alapján szűrünk
-        queryParams.push(`%${type}%`);  // A LIKE operátorral részleges egyezést keresünk
-    }
-
-    // Adatbázis lekérdezése
-    db.query(sql, queryParams, (err, results) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send('Hiba történt az adatbázis lekérdezése közben');
-        }
-
-        // Rendereljük az oldalt a szűrt eredményekkel
-        // Átadjuk a 'type' változót, hogy elérhető legyen az EJS-ben
-        res.render('kolcsonzo', { results, type: type || '' });  // Ha nincs 'type', akkor üres stringet adunk
-    });
-});
 
 
 

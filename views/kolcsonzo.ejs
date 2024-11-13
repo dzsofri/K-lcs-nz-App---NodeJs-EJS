@@ -4,24 +4,6 @@
 
 <%- include('message') %>
 
-<!-- Szűrő forma -->
-<!--<form method="GET" action="/kolcsonzo" class="mb-3">
-  <div class="row">
-    <div class="col">
-      <label for="typeFilter" class="form-label">Típus szerint szűrés</label>
-      <select id="typeFilter" name="type" class="form-select">
-        <option value="" <%= !type ? 'selected' : '' %>>Minden típus</option>
-        <option value="film" <%= type === 'film' ? 'selected' : '' %>>Film</option>
-        <option value="konyv" <%= type === 'konyv' ? 'selected' : '' %>>Könyv</option>
-      -->
-        <!-- További típusok hozzáadhatók itt -->
-      </select>
-    </div>
-    <div class="col d-flex align-items-end">
-      <button type="submit" class="btn btn-primary">Szűrés</button>
-    </div>
-  </div>
-</form>
 
 <table class="table">
     <thead>
