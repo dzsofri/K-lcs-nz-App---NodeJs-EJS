@@ -1,35 +1,51 @@
 <%- include('header') %>
 
-<h3 class="mb-3">Kölcsönzés</h4>
+<h3 class="mb-3">Kölcsönzés</h3>
 
 <%- include('message') %>
 
+<!-- Keresés form -->
+<form action="/kolcsonzo" method="GET" class="mb-4">
+  <div class="row">
+    <div class="col">
+      <select name="type" class="form-control">
+        <option value="">Típus választás</option>
+        <option value="Könyv" <%= type === 'Könyv' ? 'selected' : '' %>>Könyv</option>
+        <option value="Film" <%= type === 'Film' ? 'selected' : '' %>>Film</option>
+      </select>
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">Keresés</button>
+    </div>
+  </div>
+</form>
 
+<!-- Tábla a találatok megjelenítésére -->
 <table class="table">
-    <thead>
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Film/könyv címe</th>
+      <th scope="col">Tárgy típusa</th>
+      <th scope="col">Elérhető</th>
+      <th class="text-end" scope="col">Művelet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% results.forEach((item, index) => { %>
       <tr>
-        <th scope="col">#</th>
-        <th scope="col">Film/könyv címe</th>
-        <th scope="col">Tárgy típusa</th>
-        <th scope="col">Elérhető</th>
-        <th class="text-end" scope="col">Művelet</th>
+        <td><%= (index + 1) %>.</td>
+        <td><%= item.title %></td>
+        <td><%= item.type %></td>
+        <td><%= item.available %></td>
+        <td class="text-end">
+          <form action="/kolcsonzes/kolcsonzes/<%= item.item_id %>" method="POST">
+            <button type="submit" class="btn btn-warning">Kölcsönzés</button>
+          </form>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-        <% results.forEach((item, index) => { %>
-            <tr>
-                <td><%= (index+1)%>.</td>
-                <td><%= item.title %></td>
-                <td><%= item.type %></td>
-                <td><%= item.available %></td>
-                <td class="text-end">
-                  <form action="/kolcsonzes/kolcsonzes/<%= item.item_id %>" method="POST">
-                    <button type="submit" class="btn btn-warning">Kölcsönzés</button>
-                </form>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
+    <% }); %>
+  </tbody>
 </table>
 
 <%- include('footer') %>

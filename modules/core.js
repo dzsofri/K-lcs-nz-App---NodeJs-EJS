@@ -171,29 +171,49 @@ router.get('/reg', (req, res) => {
 // Kölcsönző oldal betöltése
 router.get('/kolcsonzo', (req, res) => {
     if (req.session.isLoggedIn) {
-        db.query(`SELECT * FROM items WHERE available = 1`, (err, results) => {
+        // A type paraméter lekérése az URL query stringből
+        const { type } = req.query;
+
+        let query = `SELECT * FROM items WHERE available = 1`;
+        let params = [];
+
+        // Ha van típus, szűrjük a típus alapján
+        if (type) {
+            query += ` AND type = ?`;
+            params.push(type);
+        }
+
+        // Lekérdezés az adatbázisból
+        db.query(query, params, (err, results) => {
             if (err) {
                 console.error(err);
                 return;
             }
+
+            // Eredmények feldolgozása
             results.forEach(item => {
                 item.title = item.title;
                 item.available = 'elérhető';
                 item.item_id = item.item_id;
             });
 
-            ejs.renderFile('./views/kolcsonzo.ejs', { session: req.session, results }, (err, html) => {
+            // EJS renderelése
+            ejs.renderFile('./views/kolcsonzo.ejs', {
+                session: req.session,
+                results,
+                type  // A kiválasztott típus átadása a sablonnak
+            }, (err, html) => {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                req.session.msg = '';
-                res.send(html);
+                req.session.msg = ''; // Üzenet törlése
+                res.send(html); // A válasz elküldése
             });
         });
         return;
     }
-    res.redirect('/');
+    res.redirect('/'); // Ha nincs bejelentkezve a felhasználó, átirányítás a kezdőlapra
 });
 
 // Saját kölcsönzések megjelenítése

@@ -144,6 +144,41 @@ router.post('/add', (req, res) => {
 
 
 
+router.get('/kolcsonzes', async (req, res) => {
+    const { title, type } = req.query;
+  
+    // Alap SQL lekérdezés, amely lehetőséget ad a szűrésre
+    let query = 'SELECT * FROM items WHERE 1=1';
+    const params = [];
+  
+    // Ha van cím, szűrj a címre
+    if (title) {
+      query += ' AND title LIKE ?';
+      params.push(`%${title}%`);
+    }
+  
+    // Ha van típus, szűrj a típusra
+    if (type) {
+      query += ' AND type = ?';
+      params.push(type);
+    }
+  
+    try {
+      // Az adatbázis lekérdezésének végrehajtása
+      const results = await db.execute(query, params);
+  
+      // A válaszban visszaadjuk a találatokat és a keresési paramétereket
+      res.render('kolcsonzes', { 
+        results, 
+        title,  // A cím szűrő paraméter
+        type    // A típus szűrő paraméter
+      });
+    } catch (err) {
+      console.error('Database query failed', err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+
 
 // Módosítás mentése (POST kérés)
 router.post('/edit/:id', (req, res) => {
