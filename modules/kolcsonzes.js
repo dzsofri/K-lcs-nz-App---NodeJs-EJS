@@ -99,12 +99,16 @@ router.post('/kolcsonzes/:id', async (req, res) => {
                     SET available = 0  
                     WHERE item_id = ?`, [item_id], (err, results) => {
                         if (err) {
-                            console.log(err);
-                            return res.status(500).send('Error updating item availability');
+                            req.session.msg = 'Error updating item availability';
+                            req.session.severity = 'danger';
+                            res.redirect('/kolcsonzo');
+                            return;
                         }
 
-                        // After the updates, send a success response
-                        res.send('Item rented and marked as unavailable!');
+                        req.session.msg = 'Item rented and marked as unavailable!';
+                        req.session.severity = 'success';
+                        res.redirect('/kolcsonzo');
+                        return;
                     });
             });
 
@@ -113,6 +117,8 @@ router.post('/kolcsonzes/:id', async (req, res) => {
         return res.status(500).send('Server error');
     }
 });
+
+
 
 
 
