@@ -1,6 +1,26 @@
-
 <div class="container mt-3">
-    <h2 class="text-center mb-2">Összes Termék</h2>
+
+    <h2>Új Termék Felvétele</h2>
+    <form action="/kolcsonzes/add" method="POST" class="mb-5">
+        <div class="mb-3">
+            <label for="itemTitle" class="form-label">Termék Neve</label>
+            <input type="text" class="form-control" id="itemTitle" name="item_name" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="itemType" class="form-label">Termék Típusa</label>
+            
+            <select class="form-control" id="itemType" name="type" required>
+                <option selected value="">Válassz..</option>
+                <option value="film">film</option>
+                <option value="könyv">könyv</option>
+            </select>
+        </div>
+       
+        <button type="submit" class="btn btn-primary">Termék Felvitele</button>
+    </form>
+
+    <h2 class=" mb-2">Összes Termék</h2>
     <table class="table table-striped table-hover">
         <thead class="thead-dark">
             <tr>
