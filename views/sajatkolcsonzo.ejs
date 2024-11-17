@@ -1,7 +1,7 @@
 <%- include('header') %>
 
-<div class="container">
-    <h3 class="mb-4">Kölcsönzések Megtekintése</h1>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Kölcsönzések Megtekintése</h1>
 
     <%- include('message') %>
 
@@ -11,8 +11,12 @@
                 <th scope="col">Kölcsönzés Dátuma</th>
                 <th scope="col">Tárgy Címe</th>
                 <th scope="col">Visszahozás Dátuma</th>
-                <% if (results.some(item => !item.return_date)) { %>
-                    <th scope="col">Akció</th> <!-- Only show the "Akció" column if there are items that haven't been returned -->
+                <% 
+                    
+                    const hasUnreturnedItems = results.some(item =>item.return_date === null || item.return_date === "Nincs visszaadva");
+                    if (hasUnreturnedItems) { 
+                %>
+                    <th scope="col">Akció</th> 
                 <% } %>
             </tr>
         </thead>
@@ -20,21 +24,22 @@
             <% results.forEach(item => { %>
                 <tr>
                     <td><%= item.rental_date %></td>
-                    <td><%= item.item_title %></td> <!-- Tárgy neve -->
-                    <td>
-                        <% if (item.return_date) { %>
+                    <td><%= item.item_title %></td> 
+                    <td >
+                        
                             <%= item.return_date %>
-                        <% } else { %>
-                            <span class="text-danger">Nincs visszahozva</span>
-                        <% } %>
+                      
                     </td>
-                    <% if (!item.return_date) { %> <!-- Only show the action column for items that haven't been returned -->
+                    <% if (item.return_date === null || item.return_date === "Nincs visszaadva") { %>
                         <td>
                             <form action="/kolcsonzes/return/<%= item.rental_id %>" method="POST">
                                 <button type="submit" class="btn btn-warning">Visszahozás</button>
                             </form>
                         </td>
+                    <% } else { %> 
+                        <td></td>
                     <% } %>
+                    
                 </tr>
             <% }); %>
         </tbody>
